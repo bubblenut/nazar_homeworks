@@ -47,8 +47,8 @@ func PrintOutput(sum int, rolls_output []string) {
 	fmt.Print("Rolls:", rolls_output)
 }
 
-	func main() {
-		ValidateInput()
-		rolls, rolls_output := RollAllDices()
-		PrintOutput(SumRolls(rolls), rolls_output)
+func main() {
+	ValidateInput()
+	rolls, rolls_output := RollAllDices()
+	PrintOutput(SumRolls(rolls), rolls_output)
 }
