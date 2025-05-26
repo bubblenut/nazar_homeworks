@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func GenerateRandomRoll(dice int) int {
@@ -17,7 +18,6 @@ func ValidateInput() {
 		log.Fatal("Введите целое число")
 	}
 }
-
 
 func RollAllDices() ([]int, []string) {
 	var Rolls []int
@@ -47,8 +47,29 @@ func PrintOutput(sum int, rolls_output []string) {
 	fmt.Print("Rolls:", rolls_output)
 }
 
+func SliceDicesAsNumbers() ([]int, []int) {
+	var Coefficients []int
+	var DiceSize []int
+	for i := 1; i < len(os.Args); i += 1 {
+		current_dices := strings.Split(os.Args[i], "d")
+		current_coefficient, IDK := strconv.Atoi(current_dices[0])
+		current_dice, IDK := strconv.Atoi(current_dices[1])
+		if IDK != nil {
+			log.Fatal("Введите броски через пробел в формате [кол-во дайсов]d[значение дайса]")
+		}
+		Coefficients = append(Coefficients, current_coefficient)
+		DiceSize = append(DiceSize, current_dice)
+	}
+	return Coefficients, DiceSize
+}
+
 func main() {
 	ValidateInput()
-	rolls, rolls_output := RollAllDices()
-	PrintOutput(SumRolls(rolls), rolls_output)
+	SliceDicesAsNumbers()
+	nums, dices := SliceDicesAsNumbers()
+	fmt.Println(nums)
+	fmt.Println(dices)
+
+	// rolls, rolls_output := RollAllDices()
+	// PrintOutput(SumRolls(rolls), rolls_output)
 }
