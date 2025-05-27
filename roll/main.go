@@ -19,7 +19,7 @@ func ValidateInput() {
 	}
 }
 
-func ResultAllDices (nums []int, dice_counts []int) []int {
+func ResultAllDices(nums []int, dice_counts []int) []int {
 	if len(nums) != len(dice_counts) {
 		log.Fatal("Перед всеми дайсами должно быть указано кол-во бросков")
 	}
@@ -44,39 +44,65 @@ func RollAllDices(rolling_dices []int) ([]int, []string) {
 	return Rolls, RollsOutput
 }
 
-func SumRolls(rolls []int) int {
+func SumRolls(rolls, nums []int) int {
 	sum := 0
 	for i := 0; i < len(rolls); i++ {
 		sum += rolls[i]
 	}
+	for k := 1; k < len(nums); k++ {
+		sum += nums[k]
+	}
 	return sum
 }
 
-func PrintOutput(sum int, rolls_output []string) {
+func PrintOutput(sum int, rolls_output []string, nums []int) {
 	fmt.Println("Total:", sum)
-	fmt.Print("Rolls:", rolls_output)
+	fmt.Print("Rolls:", rolls_output, "+", nums[1:])
 }
 
-func SliceDicesAsNumbers() ([]int, []int) {
-	var Coefficients []int
-	var DiceSize []int
+func SliceDicesAsNumbers() ([]int, []int, []int) {
+	var Coefficients, DiceSize, counts []int
 	for i := 1; i < len(os.Args); i += 1 {
-		current_dices := strings.Split(os.Args[i], "d")
-		current_coefficient, err := strconv.Atoi(current_dices[0])
-		current_dice, err := strconv.Atoi(current_dices[1])
-		if err != nil {
-			log.Fatal("Введите броски через пробел в формате [кол-во дайсов]d[значение дайса]")
+		if os.Args[i] == "+" {
+			i += 1
 		}
-		Coefficients = append(Coefficients, current_coefficient)
-		DiceSize = append(DiceSize, current_dice)
-	}
-	return Coefficients, DiceSize
-}
+		parts := strings.Split(os.Args[i], "d")
+				if len(parts) == 1 {
+			count, err := strconv.Atoi(parts[0])
+			counts = append(counts, count)
+			if err != nil {
+			log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+		}
+		} else {
+		var coef, size int
+		var err error
+		if parts[0] == "" {
+			coef = 1
+		} else {
+			coef, err = strconv.Atoi(parts[0])
+			if err != nil {
+			log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+		}
+		}
+		size, err = strconv.Atoi(parts[1])
+		Coefficients = append(Coefficients, coef)
+		DiceSize = append(DiceSize, size)
 
+		if err != nil {
+			log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+		}
+	}
+	if len(counts) == 0 {
+		counts = append(counts, 0)
+	}
+}
+	return Coefficients, DiceSize, counts
+}
 func main() {
 	ValidateInput()
-	rolls_counts, rolls_text := (RollAllDices(ResultAllDices(SliceDicesAsNumbers())))
-	PrintOutput(SumRolls(rolls_counts), rolls_text)
+	coeffs, sizes, nums := SliceDicesAsNumbers()
+	output_counts, output_text := RollAllDices(ResultAllDices(coeffs, sizes))
+	PrintOutput(SumRolls(output_counts, nums), output_text, nums)
 	// rolls, rolls_output := RollAllDices()
 	// PrintOutput(SumRolls(rolls), rolls_output)
 }
