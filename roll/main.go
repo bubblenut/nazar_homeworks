@@ -63,39 +63,39 @@ func PrintOutput(sum int, rolls_output []string, nums []int) {
 func SliceDicesAsNumbers() ([]int, []int, []int) {
 	var Coefficients, DiceSize, counts []int
 	for i := 1; i < len(os.Args); i += 1 {
-		if os.Args[i] == "+" {
+		if os.Args[i] == "+" || os.Args[i] == "," {
 			i += 1
 		}
 		parts := strings.Split(os.Args[i], "d")
-				if len(parts) == 1 {
+		if len(parts) == 1 {
 			count, err := strconv.Atoi(parts[0])
 			counts = append(counts, count)
 			if err != nil {
-			log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
-		}
+				log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+			}
 		} else {
-		var coef, size int
-		var err error
-		if parts[0] == "" {
-			coef = 1
-		} else {
-			coef, err = strconv.Atoi(parts[0])
-			if err != nil {
-			log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
-		}
-		}
-		size, err = strconv.Atoi(parts[1])
-		Coefficients = append(Coefficients, coef)
-		DiceSize = append(DiceSize, size)
+			var coef, size int
+			var err error
+			if parts[0] == "" {
+				coef = 1
+			} else {
+				coef, err = strconv.Atoi(parts[0])
+				if err != nil {
+					log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+				}
+			}
+			size, err = strconv.Atoi(parts[1])
+			Coefficients = append(Coefficients, coef)
+			DiceSize = append(DiceSize, size)
 
-		if err != nil {
-			log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+			if err != nil {
+				log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+			}
+		}
+		if len(counts) == 0 {
+			counts = append(counts, 0)
 		}
 	}
-	if len(counts) == 0 {
-		counts = append(counts, 0)
-	}
-}
 	return Coefficients, DiceSize, counts
 }
 func main() {
