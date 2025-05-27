@@ -19,17 +19,27 @@ func ValidateInput() {
 	}
 }
 
-func RollAllDices() ([]int, []string) {
+func ResultAllDices (nums []int, dice_counts []int) []int {
+	if len(nums) != len(dice_counts) {
+		log.Fatal("Перед всеми дайсами должно быть указано кол-во бросков")
+	}
+	var rolling_dices []int
+	for i := 0; i < len(nums); i += 1 {
+		for k := 0; k < nums[i]; k += 1 {
+			rolling_dices = append(rolling_dices, dice_counts[i])
+		}
+	}
+
+	return rolling_dices
+}
+
+func RollAllDices(rolling_dices []int) ([]int, []string) {
 	var Rolls []int
 	var RollsOutput []string
-	for i := 1; i < len(os.Args); i++ {
-		dice, err := strconv.Atoi(os.Args[i])
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		current_roll := GenerateRandomRoll(dice)
+	for i := 0; i < len(rolling_dices); i++ {
+		current_roll := GenerateRandomRoll(rolling_dices[i])
 		Rolls = append(Rolls, current_roll)
-		RollsOutput = append(RollsOutput, strconv.Itoa(current_roll)+"/"+strconv.Itoa(dice)+",")
+		RollsOutput = append(RollsOutput, strconv.Itoa(current_roll)+"/"+strconv.Itoa(rolling_dices[i])+",")
 	}
 	return Rolls, RollsOutput
 }
@@ -52,9 +62,9 @@ func SliceDicesAsNumbers() ([]int, []int) {
 	var DiceSize []int
 	for i := 1; i < len(os.Args); i += 1 {
 		current_dices := strings.Split(os.Args[i], "d")
-		current_coefficient, IDK := strconv.Atoi(current_dices[0])
-		current_dice, IDK := strconv.Atoi(current_dices[1])
-		if IDK != nil {
+		current_coefficient, err := strconv.Atoi(current_dices[0])
+		current_dice, err := strconv.Atoi(current_dices[1])
+		if err != nil {
 			log.Fatal("Введите броски через пробел в формате [кол-во дайсов]d[значение дайса]")
 		}
 		Coefficients = append(Coefficients, current_coefficient)
@@ -65,11 +75,8 @@ func SliceDicesAsNumbers() ([]int, []int) {
 
 func main() {
 	ValidateInput()
-	SliceDicesAsNumbers()
-	nums, dices := SliceDicesAsNumbers()
-	fmt.Println(nums)
-	fmt.Println(dices)
-
+	rolls_counts, rolls_text := (RollAllDices(ResultAllDices(SliceDicesAsNumbers())))
+	PrintOutput(SumRolls(rolls_counts), rolls_text)
 	// rolls, rolls_output := RollAllDices()
 	// PrintOutput(SumRolls(rolls), rolls_output)
 }
