@@ -19,20 +19,6 @@ func ValidateInput() {
 	}
 }
 
-func ResultAllDices(nums []int, dice_counts []int) []int {
-	if len(nums) != len(dice_counts) {
-		log.Fatal("Перед всеми дайсами должно быть указано кол-во бросков")
-	}
-	var rolling_dices []int
-	for i := 0; i < len(nums); i += 1 {
-		for k := 0; k < nums[i]; k += 1 {
-			rolling_dices = append(rolling_dices, dice_counts[i])
-		}
-	}
-
-	return rolling_dices
-}
-
 func RollAllDices(rolling_dices []int) ([]int, []string) {
 	var Rolls []int
 	var RollsOutput []string
@@ -60,8 +46,8 @@ func PrintOutput(sum int, rolls_output []string, nums []int) {
 	fmt.Print("Rolls:", rolls_output, "+", nums[1:])
 }
 
-func SliceDicesAsNumbers() ([]int, []int, []int) {
-	var Coefficients, DiceSize, counts []int
+func ExtractDicesFromArgs() ([]int, []int) {
+	var AllDices, counts []int
 	for i := 1; i < len(os.Args); i += 1 {
 		if os.Args[i] == "+" || os.Args[i] == "," {
 			i += 1
@@ -83,11 +69,11 @@ func SliceDicesAsNumbers() ([]int, []int, []int) {
 				if err != nil {
 					log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
 				}
+				size, err = strconv.Atoi(parts[1])
 			}
-			size, err = strconv.Atoi(parts[1])
-			Coefficients = append(Coefficients, coef)
-			DiceSize = append(DiceSize, size)
-
+			for i := 0; i < coef; i++ {
+				AllDices = append(AllDices, size)
+			}
 			if err != nil {
 				log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
 			}
@@ -96,13 +82,13 @@ func SliceDicesAsNumbers() ([]int, []int, []int) {
 			counts = append(counts, 0)
 		}
 	}
-	return Coefficients, DiceSize, counts
+	return AllDices, counts
 }
 func main() {
 	ValidateInput()
-	coeffs, sizes, nums := SliceDicesAsNumbers()
-	output_counts, output_text := RollAllDices(ResultAllDices(coeffs, sizes))
-	PrintOutput(SumRolls(output_counts, nums), output_text, nums)
+	dices, mods := ExtractDicesFromArgs()
+	rolls, text := RollAllDices(dices)
+	PrintOutput(SumRolls(rolls, mods), text, mods)
 	// rolls, rolls_output := RollAllDices()
 	// PrintOutput(SumRolls(rolls), rolls_output)
 }
