@@ -68,10 +68,10 @@ func ExtractDicesFromArgs() ([]int, []int) {
 				coef, err = strconv.Atoi(parts[0])
 				if err != nil {
 					log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
-				}
-				size, err = strconv.Atoi(parts[1])
+				}	
 			}
-			for i := 0; i < coef; i++ {
+			size, err = strconv.Atoi(parts[1])
+			for i := 1; i <= coef; i++ {
 				AllDices = append(AllDices, size)
 			}
 			if err != nil {
