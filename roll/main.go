@@ -46,6 +46,21 @@ func PrintOutput(sum int, rolls_output []string, nums []int) {
 	fmt.Print("Rolls:", rolls_output, "+", nums[1:])
 }
 
+func StringToInt(str string) int {
+	num, err := strconv.Atoi(str)
+	if err != nil {
+				log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
+			}
+	return num
+}
+
+func CheckMassive(massive []int) []int {
+	if len(massive) == 0 {
+		massive = append(massive, 0)
+	}
+	return massive
+}
+
 func ExtractDicesFromArgs() ([]int, []int) {
 	var AllDices, counts []int
 	for i := 1; i < len(os.Args); i += 1 {
@@ -54,33 +69,21 @@ func ExtractDicesFromArgs() ([]int, []int) {
 		}
 		parts := strings.Split(os.Args[i], "d")
 		if len(parts) == 1 {
-			count, err := strconv.Atoi(parts[0])
+			count := StringToInt(parts[0])
 			counts = append(counts, count)
-			if err != nil {
-				log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
-			}
 		} else {
 			var coef, size int
-			var err error
 			if parts[0] == "" {
 				coef = 1
 			} else {
-				coef, err = strconv.Atoi(parts[0])
-				if err != nil {
-					log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
-				}	
+				coef = StringToInt(parts[0])
 			}
-			size, err = strconv.Atoi(parts[1])
+			size = StringToInt(parts[1])
 			for i := 1; i <= coef; i++ {
 				AllDices = append(AllDices, size)
 			}
-			if err != nil {
-				log.Fatal("Введите бросок в формате (кол-во дайсов)d(размер дайса)")
-			}
 		}
-		if len(counts) == 0 {
-			counts = append(counts, 0)
-		}
+		counts = CheckMassive(counts)
 	}
 	return AllDices, counts
 }
