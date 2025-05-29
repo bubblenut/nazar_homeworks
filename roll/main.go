@@ -10,7 +10,7 @@ import (
 )
 
 func GenerateRandomRoll(dice int) int {
-	return rand.Intn(dice-1) + 1
+	return rand.Intn(dice) +1
 }
 
 func ValidateInput() {
